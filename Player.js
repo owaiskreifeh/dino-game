@@ -23,14 +23,14 @@ export default class Player {
     this.yStandingPosition = this.y;
 
     this.standingStillImage = new Image();
-    this.standingStillImage.src = "images/standing_still.png";
+    this.standingStillImage.src = "images/hussam_standing.png";
     this.image = this.standingStillImage;
 
     const dinoRunImage1 = new Image();
-    dinoRunImage1.src = "images/dino_run1.png";
+    dinoRunImage1.src = "images/hussam_run.png";
 
     const dinoRunImage2 = new Image();
-    dinoRunImage2.src = "images/dino_run2.png";
+    dinoRunImage2.src = "images/hussam_standing.png";
 
     this.dinoRunImages.push(dinoRunImage1);
     this.dinoRunImages.push(dinoRunImage2);
@@ -48,6 +48,16 @@ export default class Player {
 
     window.addEventListener("touchstart", this.touchstart);
     window.addEventListener("touchend", this.touchend);
+
+    // Use the function to get and log the microphone input volume
+    getMicVolume((volume) => {
+      if (volume > 30) {
+        this.jumpPressed = true;
+      } else {
+        this.jumpPressed = false;
+      }
+    });
+
   }
 
   touchstart = () => {
@@ -121,5 +131,57 @@ export default class Player {
 
   draw() {
     this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+
+}
+
+
+async function getMicVolume(callback) {
+  try {
+      // Request access to the user's microphone
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Create an AudioContext
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create a MediaStreamSource from the microphone input stream
+      const source = audioContext.createMediaStreamSource(stream);
+      
+      // Create an AnalyserNode for analyzing the audio data
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      
+      // Connect the source to the analyser
+      source.connect(analyser);
+      
+      // Create a buffer to hold the audio data
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      
+      // A function to get the volume data
+      function updateVolume() {
+          analyser.getByteFrequencyData(dataArray);
+          let values = 0;
+          const length = dataArray.length;
+
+          // Sum up all the frequency values
+          for (let i = 0; i < length; i++) {
+              values += dataArray[i];
+          }
+
+          // Calculate the average volume
+          const average = values / length;
+
+          // Invoke the callback with the volume value
+          callback(average);
+
+          // Call this function again to keep updating the volume
+          requestAnimationFrame(updateVolume);
+      }
+
+      // Start the volume update loop
+      updateVolume();
+
+  } catch (err) {
+      console.error('The following error occurred: ' + err);
   }
 }

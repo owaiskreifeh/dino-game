@@ -6,7 +6,7 @@ import Score from "./Score.js";
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const GAME_SPEED_START = 1; // 1.0
+const GAME_SPEED_START = 0.3; // 1.0
 const GAME_SPEED_INCREMENT = 0.00001;
 
 const GAME_WIDTH = 800;
@@ -20,9 +20,9 @@ const GROUND_HEIGHT = 24;
 const GROUND_AND_CACTUS_SPEED = 0.5;
 
 const CACTI_CONFIG = [
-  { width: 48 / 1.5, height: 100 / 1.5, image: "images/cactus_1.png" },
-  { width: 98 / 1.5, height: 100 / 1.5, image: "images/cactus_2.png" },
-  { width: 68 / 1.5, height: 70 / 1.5, image: "images/cactus_3.png" },
+  { width: 48 / 1.5, height: 100 / 1.5, image: "images/cd1.png" },
+  { width: 98 / 1.5, height: 100 / 1.5, image: "images/cd2.png" },
+  { width: 68 / 1.5, height: 70 / 1.5, image: "images/cd3.png" },
 ];
 
 //Game Objects
